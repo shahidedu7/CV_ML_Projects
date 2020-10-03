@@ -1,0 +1,7 @@
+These files are the assignment files of course cs231n:Convolutional Neural Networks for Visual Recognition.
+You Can follow the files as below:
+1. knn.ipynb and k_nearest_neighbor.py
+2. svm.ipynb, linar_svm.py and linear_classifier.py
+3. softmax.ipynb and softmax.py
+4. two_layer_net.ipynb and neural_net.py
+5. features.ipynb
