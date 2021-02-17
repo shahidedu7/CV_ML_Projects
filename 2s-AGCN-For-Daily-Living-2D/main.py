@@ -282,7 +282,7 @@ class Processor():
             if len(self.arg.device) > 1:
                 self.model = nn.DataParallel(
                     self.model,
-                    device_ids=self.arg.device,
+                    device_ids=(0,),
                     output_device=output_device)
 
     def load_optimizer(self):
