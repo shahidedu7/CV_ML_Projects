@@ -48,7 +48,7 @@ def get_nonzero_std(s):  # tvc
     index = s.sum(-1).sum(-1) != 0  # select valid frames
     s = s[index]
     if len(s) != 0:
-        s = s[:, :, 0].std() + s[:, :, 1].std() + s[:, :, 2].std()  # three channels
+        s = s[:, :, 0].std() + s[:, :, 1].std()# + s[:, :, 2].std()  # three channels
     else:
         s = 0
     return s
@@ -56,7 +56,7 @@ def get_nonzero_std(s):  # tvc
 
 def read_xyz(file, max_body=2, num_joint=15):  # 取了前两个body
     seq_info = read_skeleton_filter(file)
-    data = np.zeros((max_body, len(seq_info['frames']), num_joint, 3))
+    data = np.zeros((max_body, len(seq_info['frames']), num_joint, 2))
     for n, f in enumerate(seq_info['frames']):
         if len(f)!=0:
             for m, b in enumerate(f):
@@ -64,11 +64,11 @@ def read_xyz(file, max_body=2, num_joint=15):  # 取了前两个body
                     if m < max_body:
                         if j < 13:
                             k=13-j-1
-                            data[m, n, j, :] = [b['pose3d'][k], b['pose3d'][k+13], b['pose3d'][k+13*2]]
+                            data[m, n, j, :] = [b['pose2d'][k], b['pose2d'][k+13]]#, b['pose3d'][k+13*2]]
                         elif j==13:
-                            data[m, n, j, :] = [(b['pose3d'][10]+b['pose3d'][11])/2, (b['pose3d'][23]+b['pose3d'][24])/2, (b['pose3d'][36]+b['pose3d'][37])/2]
+                            data[m, n, j, :] = [(b['pose2d'][10]+b['pose2d'][11])/2, (b['pose2d'][23]+b['pose2d'][24])/2]#, (b['pose3d'][36]+b['pose3d'][37])/2]
                         elif j==14:
-                            data[m, n, j, :] = [(b['pose3d'][4]+b['pose3d'][5])/2, (b['pose3d'][17]+b['pose3d'][18])/2, (b['pose3d'][30]+b['pose3d'][31])/2]                  
+                            data[m, n, j, :] = [(b['pose2d'][4]+b['pose2d'][5])/2, (b['pose2d'][17]+b['pose2d'][18])/2]#, (b['pose3d'][30]+b['pose3d'][31])/2]                  
                     else:
                         pass
 
@@ -140,7 +140,7 @@ def gendata(data_path, out_path, ignored_sample_path=None, benchmark='xview', pa
     with open('{}/{}_label.pkl'.format(out_path, part), 'wb') as f:
         pickle.dump((sample_name, list(sample_label)), f)
 
-    fp = np.zeros((len(sample_label), 3, max_frame, num_joint, max_body_true), dtype=np.float32)
+    fp = np.zeros((len(sample_label), 2, max_frame, num_joint, max_body_true), dtype=np.float32)
 
     for i, s in enumerate(tqdm(sample_name)):
         data = read_xyz(os.path.join(data_path, s), max_body=max_body, num_joint=num_joint)
